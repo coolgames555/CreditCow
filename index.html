@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter your cowID</title>
+</head>
+<body>
+   <label for="username">CowID:</label>
+<input type="text" id="id" name="cowID" placeholder="What is out CowID">
+<button id="submitBtn">Submit</button>
+<script> 
+  const btn = document.getElementById('submitBtn');
+
+btn.addEventListener('click', function() {
+    // Get the value from the input field
+    let ID = document.getElementById('id').value;
+    if (ID == 101) 
+    {
+      window.location.href = "https://www.example.com";
+
+});
+</script>
+</body>
+</html>
