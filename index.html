@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter your cowID</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enter your cowID</title>
 </head>
 <body>
-   <label for="username">CowID:</label>
-<input type="text" id="id" name="cowID" placeholder="What is out CowID">
-<button id="submitBtn">Submit</button>
-<script> 
-  const btn = document.getElementById('submitBtn');
+  <label for="cowID">CowID:</label>
+  <input type="text" id="cowID" name="cowID" placeholder="What is our CowID">
+  <button id="submitBtn" type="button">Submit</button>
 
-btn.addEventListener('click', function() {
-    // Get the value from the input field
-    let ID = document.getElementById('id').value;
-    if (ID == 101) 
-    {
-      window.location.href = "https://www.example.com";
+  <script>
+    const btn = document.getElementById('submitBtn');
+    const input = document.getElementById('cowID');
 
-});
-</script>
+    btn.addEventListener('click', function() {
+      const ID = input.value.trim();
+
+      // Compare as string or convert to number — both ways are handled here.
+      if (ID === '101' || Number(ID) === 101) {
+        window.location.href = "https://www.example.com";
+      } else {
+        // Feedback if wrong ID
+        alert('Incorrect CowID');
+      }
+    });
+  </script>
 </body>
 </html>
