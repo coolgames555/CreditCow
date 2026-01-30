@@ -4,15 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DO NOT USE</title>
+    <style>
+      /* Make the main heading 10% of the viewport height,
+         and all other h1s 5% of the viewport height. */
+      h1 {
+        font-family: 'Courier New', Courier, monospace;
+        margin: 0; /* remove default margins so height is predictable */
+      }
+
+      /* Primary heading (DEBUG's CreditCow) */
+      h1.primary {
+        height: 10vh;            /* 10% of viewport height */
+        display: flex;
+        align-items: center;     /* vertical centering */
+        justify-content: center; /* horizontal centering */
+        font-size: 6vh;          /* scale font to fit the area */
+      }
+
+      /* All other h1 elements */
+      h1.secondary {
+        height: 5vh;             /* 5% of viewport height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3vh;          /* scale font to fit the smaller area */
+      }
+
+      /* Ensure buttons have some spacing so they don't overlap headings */
+      .controls {
+        margin: 12px 0;
+      }
+    </style>
 </head>
 <body>
-    <h1 style="font-family: 'Courier New', Courier, monospace; font-size: 120px;">DEBUG's CreditCow</h1>
-    <h1 style="font-family: 'Courier New', Courier, monospace; font-size: 80px;">Your public receiver ID: 1</h1>
+    <h1 class="primary">DEBUG's CreditCow</h1>
+    <h1 class="secondary">Your public receiver ID: 1</h1>
 
-    <button id="btn-add">Add 1 to send</button>
-    <button id="btn-subtract">Subtract 1 from send</button>
+    <div class="controls">
+      <button id="btn-add">Add 1 to send</button>
+      <button id="btn-subtract">Subtract 1 from send</button>
+    </div>
 
-    <h1 id="output-area1">this shall be switched</h1>
+    <h1 id="output-area1" class="secondary">this shall be switched</h1>
 
     <script>
       // Use a proper JS declaration
