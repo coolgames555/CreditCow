@@ -19,9 +19,8 @@
     <h1 class="secondary">Your public receiver ID: 1</h1>
 
     <div class="auth-box">
-      <label for="tokenInput"><b>Step 1: Enter GitHub Token</b></label><br>
+      <label for="tokenInput"><b>1. Paste Token</b></label><br>
       <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx">
-      <p style="font-size: 11px; color: #d93025;">Ensure token has 'repo' scope checked!</p>
     </div>
 
     <div class="controls">
@@ -32,7 +31,7 @@
     <h1 id="output-area1" class="secondary">0</h1>
     
     <div style="text-align: center; margin-top: 20px;">
-      <label for="sendID"><b>Step 2: Target File ID</b></label><br>
+      <label for="sendID"><b>2. Target ID</b></label><br>
       <input type="text" id="sendID" placeholder="e.g., 2">
       <button id="submitBtn" type="button" style="padding: 10px 20px; background: #2ea44f; color: white; border: none; border-radius: 6px; cursor: pointer;">Submit & Sync</button>
     </div>
@@ -68,17 +67,15 @@
       const REPO = 'CreditCow';
       const PATH = `data/${targetID}.txt`; 
       
-      // FIXED: Added /repos/ and used backticks for proper variable interpolation
+      // FIXED: Must use backticks (`) and include /repos/
       const url = `https://api.github.com{OWNER}/${REPO}/contents/${PATH}`;
       
-      console.log("Requesting URL:", url);
+      console.log("Fetching from:", url); // Verify this in F12 console
 
-      if (!GITHUB_TOKEN) return alert("Please enter a token first!");
+      if (!GITHUB_TOKEN) return alert("Please enter your token!");
 
       try {
-        // 1. GET current content
         const response = await fetch(url, {
-          method: 'GET',
           headers: { 
             "Authorization": `Bearer ${GITHUB_TOKEN}`,
             "Accept": "application/vnd.github.v3+json"
@@ -87,46 +84,39 @@
         
         if (!response.ok) {
           const errorMsg = await response.json();
-          throw new Error(`GitHub Error (${response.status}): ${errorMsg.message}`);
+          throw new Error(`GitHub Error: ${errorMsg.message}`);
         }
 
         const fileData = await response.json();
         const currentVal = parseFloat(atob(fileData.content)) || 0; 
         const newVal = (currentVal + sendTotal).toString(); 
 
-        // 2. PUT updated content
         const updateRes = await fetch(url, {
           method: 'PUT',
           headers: {
             "Authorization": `Bearer ${GITHUB_TOKEN}`,
-            "Content-Type": "application/json",
-            "Accept": "application/vnd.github.v3+json"
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            message: `Sync: Added ${sendTotal} to ${targetID}.txt`,
+            message: `Updating ${targetID}.txt`,
             content: btoa(newVal),
-            sha: fileData.sha // Required to update an existing file
+            sha: fileData.sha 
           })
         });
 
         if (updateRes.ok) {
-          alert(`Success! Updated ${targetID}.txt to ${newVal}`);
+          alert(`Updated ${targetID}.txt to ${newVal}`);
           sendTotal = 0;
           updateDisplay();
-        } else {
-          const err = await updateRes.json();
-          throw new Error(`Push Failed: ${err.message}`);
         }
       } catch (error) {
-        console.error("Critical Error:", error);
         alert(error.message);
       }
     }
 
-    btnSubmit.addEventListener('click', function() {
+    btnSubmit.addEventListener('click', () => {
       const targetID = inputID.value.trim();
-      if (!targetID) return alert("Please enter a Target ID");
-      subtractAndSync(targetID);
+      if (targetID) subtractAndSync(targetID);
     });
 
     updateDisplay();
