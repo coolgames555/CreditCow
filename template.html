@@ -32,6 +32,10 @@
         sendTotal--;
         updateDisplay();
       }
+        if (sendTotal == -1)
+        {
+            sendTotal++
+        }
 
       // Wire buttons (preferred over inline onclick)
       document.getElementById("btn-add").addEventListener("click", add);
