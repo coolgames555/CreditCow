@@ -68,7 +68,7 @@
       const PATH = `data/${targetID}.txt`; 
       
       // FIXED: Must use backticks (`) and include /repos/
-      const url = `https://api.github.com{OWNER}/${REPO}/contents/${PATH}`;
+      const url = `https://api.github.com/${OWNER}/${REPO}/contents/${PATH}`;
       
       console.log("Fetching from:", url); // Verify this in F12 console
 
