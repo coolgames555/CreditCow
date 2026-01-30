@@ -72,7 +72,7 @@
         const fileData = await response.json();
 
         const currentVal = parseFloat(atob(fileData.content)); 
-        const newVal = (currentVal - sendTotal).toString(); 
+        const newVal = (currentVal + sendTotal).toString(); 
 
         const updateRes = await fetch(url, {
           method: 'PUT',
