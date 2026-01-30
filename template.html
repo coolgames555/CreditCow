@@ -3,37 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DO NOT USE</title>
+    <title>CreditCow Sync</title>
     <style>
-      /* Make the main heading 10% of the viewport height,
-         and all other h1s 5% of the viewport height. */
-      h1 {
-        font-family: 'Courier New', Courier, monospace;
-        margin: 0; /* remove default margins so height is predictable */
-      }
-
-      /* Primary heading (DEBUG's CreditCow) */
-      h1.primary {
-        height: 10vh;            /* 10% of viewport height */
-        display: flex;
-        align-items: center;     /* vertical centering */
-        justify-content: center; /* horizontal centering */
-        font-size: 6vh;          /* scale font to fit the area */
-      }
-
-      /* All other h1 elements */
-      h1.secondary {
-        height: 5vh;             /* 5% of viewport height */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3vh;          /* scale font to fit the smaller area */
-      }
-
-      /* Ensure buttons have some spacing so they don't overlap headings */
-      .controls {
-        margin: 12px 0;
-      }
+      h1 { font-family: 'Courier New', Courier, monospace; margin: 0; }
+      h1.primary { height: 10vh; display: flex; align-items: center; justify-content: center; font-size: 6vh; }
+      h1.secondary { height: 5vh; display: flex; align-items: center; justify-content: center; font-size: 3vh; }
+      .controls { margin: 12px 0; text-align: center; }
     </style>
 </head>
 <body>
@@ -46,100 +21,89 @@
       <button id="btn-subtract">Subtract 1 from send</button>
     </div>
 
-    <h1 id="output-area1" class="secondary">this shall be switched</h1>
-     <label for="sendID">sendID:</label>
-  <input type="text" id="sendID" name="sendID" placeholder="What is the sendID of your target">
-  <button id="submitBtn" type="button">Submit</button>
+    <h1 id="output-area1" class="secondary">0</h1>
+    
+    <div style="text-align: center;">
+      <label for="sendID">sendID:</label>
+      <input type="text" id="sendID" placeholder="Target ID">
+      <button id="submitBtn" type="button">Submit & Sync</button>
+    </div>
+
   <script>
-    const btn = document.getElementById('submitBtn');
-    const input = document.getElementById('cowID');
+    // 1. Global Variables
+    let sendTotal = 0;
+    const btnSubmit = document.getElementById('submitBtn');
+    const inputID = document.getElementById('sendID'); // Fixed ID to match HTML
+    const out = document.getElementById("output-area1");
+    const btnSub = document.getElementById("btn-subtract");
 
-    btn.addEventListener('click', function()
-      const ID = input.value.trim();
+    // 2. Display Logic
+    function updateDisplay() {
+      out.textContent = sendTotal;
+      btnSub.disabled = sendTotal <= 0;
+    }
 
-        //
-        //
-        //
-        //
-        // Use a proper JS declaration
-      let sendTotal = 0;
+    document.getElementById("btn-add").addEventListener("click", () => {
+      sendTotal++;
+      updateDisplay();
+    });
 
-      function updateDisplay() {
-        const out = document.getElementById("output-area1");
-        const btnSub = document.getElementById("btn-subtract");
-        if (out) out.textContent = sendTotal;
-        // Disable subtract when at zero to prevent negative values
-        if (btnSub) btnSub.disabled = sendTotal <= 0;
-      }
-
-      function add() {
-        sendTotal++;
+    btnSub.addEventListener("click", () => {
+      if (sendTotal > 0) {
+        sendTotal--;
         updateDisplay();
       }
+    });
 
-      function subtract() {
-        // Prevent going below 0
-        if (sendTotal > 0) {
-          sendTotal--;
-          updateDisplay();
-        }
-      }
+    // 3. GitHub Sync Logic
+    async function subtractAndSync(targetID) {
+      const GITHUB_TOKEN = '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'; 
+      const OWNER = 'coolgames555';
+      const REPO = 'CreditCow';
+      const PATH = `data/${targetID}.txt`; // Use backticks for interpolation
+      const url = `https://api.github.com{OWNER}/${REPO}/contents/${PATH}`;
 
-      // Wire buttons (preferred over inline onclick)
-      document.getElementById("btn-add").addEventListener("click", add);
-      document.getElementById("btn-subtract").addEventListener("click", subtract);
-
-      // Initialize display
-      updateDisplay();
+      try {
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${GITHUB_TOKEN}` }
+        });
         
-//
-//
-//
-//
-        async function subtractAndSync() {
-  const GITHUB_TOKEN = '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'; // Requires 'repo' scope
-  const OWNER = 'coolgames555';
-  const REPO = 'CreditCow';
-  const PATH = 'data/${ID}.txt';
-  const url = `https://api.github.com{OWNER}/${REPO}/contents/${PATH}`;
+        if (!response.ok) throw new Error("File not found on GitHub");
+        const fileData = await response.json();
 
-  try {
-    // 1. Fetch current file data
-    const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${GITHUB_TOKEN}` }
-    });
-    
-    if (!response.ok) throw new Error("Could not find file");
-    const fileData = await response.json();
+        const currentVal = parseFloat(atob(fileData.content)); 
+        const newVal = (currentVal - sendTotal).toString(); 
 
-    // 2. Decode content and subtract ID
-    const currentVal = parseFloat(atob(fileData.content)); 
-    const newVal = (currentVal - sendTotal).toString(); 
+        const updateRes = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Subtracted ${sendTotal} from ${targetID}`,
+            content: btoa(newVal),
+            sha: fileData.sha
+          })
+        });
 
-    // 3. Push updated value back to GitHub
-    const updateRes = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `used ${ID} from file`,
-        content: btoa(newVal), // Re-encode to Base64
-        sha: fileData.sha      // Required to overwrite existing file
-      })
-    });
-
-    if (updateRes.ok) {
-      console.log(`Update successful. New value: ${newVal}`);
+        if (updateRes.ok) {
+          alert(`Success! New value for ${targetID}: ${newVal}`);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Sync failed: " + error.message);
+      }
     }
-  } catch (error) {
-    console.error("Error during sync:", error);
-  }
-}
-        </script>
-    <script>
-      
-    </script>
+
+    // 4. Submit Trigger
+    btnSubmit.addEventListener('click', function() {
+      const ID = inputID.value.trim();
+      if (!ID) return alert("Please enter a Target ID");
+      subtractAndSync(ID);
+    });
+
+    updateDisplay();
+  </script>
 </body>
 </html>
