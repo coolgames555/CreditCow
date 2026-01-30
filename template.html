@@ -37,6 +37,7 @@
     </style>
 </head>
 <body>
+    
     <h1 class="primary">DEBUG's CreditCow</h1>
     <h1 class="secondary">Your public receiver ID: 1</h1>
 
@@ -46,9 +47,21 @@
     </div>
 
     <h1 id="output-area1" class="secondary">this shall be switched</h1>
+     <label for="sendID">sendID:</label>
+  <input type="text" id="sendID" name="sendID" placeholder="What is the sendID of your target">
+  <button id="submitBtn" type="button">Submit</button>
+  <script>
+    const btn = document.getElementById('submitBtn');
+    const input = document.getElementById('cowID');
 
-    <script>
-      // Use a proper JS declaration
+    btn.addEventListener('click', function() {
+      const ID = input.value.trim();
+
+        //
+        //
+        //
+        //
+        // Use a proper JS declaration
       let sendTotal = 0;
 
       function updateDisplay() {
@@ -78,6 +91,55 @@
 
       // Initialize display
       updateDisplay();
+        
+//
+//
+//
+//
+        async function subtractAndSync() {
+  const GITHUB_TOKEN = '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'; // Requires 'repo' scope
+  const OWNER = 'coolgames555';
+  const REPO = 'CreditCow';
+  const PATH = 'data/${ID}.txt';
+  const url = `https://api.github.com{OWNER}/${REPO}/contents/${PATH}`;
+
+  try {
+    // 1. Fetch current file data
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${GITHUB_TOKEN}` }
+    });
+    
+    if (!response.ok) throw new Error("Could not find file");
+    const fileData = await response.json();
+
+    // 2. Decode content and subtract ID
+    const currentVal = parseFloat(atob(fileData.content)); 
+    const newVal = (currentVal - sendTotal).toString(); 
+
+    // 3. Push updated value back to GitHub
+    const updateRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `used ${ID} from file`,
+        content: btoa(newVal), // Re-encode to Base64
+        sha: fileData.sha      // Required to overwrite existing file
+      })
+    });
+
+    if (updateRes.ok) {
+      console.log(`Update successful. New value: ${newVal}`);
+    }
+  } catch (error) {
+    console.error("Error during sync:", error);
+  }
+}
+        </script>
+    <script>
+      
     </script>
 </body>
 </html>
