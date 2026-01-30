@@ -9,7 +9,7 @@
       h1.primary { height: 10vh; display: flex; align-items: center; justify-content: center; font-size: 6vh; }
       h1.secondary { height: 5vh; display: flex; align-items: center; justify-content: center; font-size: 3vh; }
       .controls { margin: 12px 0; text-align: center; }
-      .auth-box { background: #f4f4f4; padding: 10px; margin-bottom: 20px; border-radius: 8px; text-align: center; }
+      .auth-box {  padding: 10px; margin-bottom: 20px; border-radius: 8px; text-align: center; }
       #tokenInput { width: 300px; padding: 5px; }
     </style>
 </head>
@@ -69,7 +69,7 @@
       const OWNER = 'coolgames555';
       const REPO = 'CreditCow';
       const PATH = `data/${targetID}.txt`; 
-      const url = `https://api.github.com{OWNER}/${REPO}/contents/${PATH}`;
+      const url = `https://api.github.com${OWNER}/${REPO}/contents/${PATH}`;
 
       if (!GITHUB_TOKEN) {
         alert("Please paste your GitHub Token first!");
