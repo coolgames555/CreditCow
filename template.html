@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+  int sendTotal = 0
+  function add() {
+    sendTotal++;
+  }
+        function subtract() {
+    sendTotal--;
+  }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DO NOT USE</title>
 </head>
 <body>
+   
     <h1 style="font-family: 'Courier New', Courier, monospace;> Template's CreditCow </h1>
    <h1 style="font-family: 'Courier New', Courier, monospace;> Your public reciver ID: 1</h1>
+    <button onclick="add()">Add 1 to send</button>
+    <button onclick="subtract()">Subtract 1 from send</button>
+    <h1 id="output-area1"></h1>
+     <script>
+                document.getElementById("output-area1").innerHTML = sendTotal;
+    </script>
 </body>
 </html>
