@@ -6,7 +6,7 @@
     <title>DO NOT USE</title>
 </head>
 <body>
-    <h1 style="font-family: 'Courier New', Courier, monospace;">Template's CreditCow</h1>
+    <h1 style="font-family: 'Courier New', Courier, monospace;">DEBUG's CreditCow</h1>
     <h1 style="font-family: 'Courier New', Courier, monospace;">Your public receiver ID: 1</h1>
 
     <button id="btn-add">Add 1 to send</button>
@@ -20,7 +20,10 @@
 
       function updateDisplay() {
         const out = document.getElementById("output-area1");
+        const btnSub = document.getElementById("btn-subtract");
         if (out) out.textContent = sendTotal;
+        // Disable subtract when at zero to prevent negative values
+        if (btnSub) btnSub.disabled = sendTotal <= 0;
       }
 
       function add() {
@@ -29,13 +32,12 @@
       }
 
       function subtract() {
-        sendTotal--;
-        updateDisplay();
-      }
-        if (sendTotal == -1)
-        {
-            sendTotal++
+        // Prevent going below 0
+        if (sendTotal > 0) {
+          sendTotal--;
+          updateDisplay();
         }
+      }
 
       // Wire buttons (preferred over inline onclick)
       document.getElementById("btn-add").addEventListener("click", add);
